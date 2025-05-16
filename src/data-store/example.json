@@ -1,0 +1,18 @@
+[
+  [
+    {
+      "icons": ["accumulator", "battery"],
+      "sideRoutes": {
+        "left": ["battery"],
+        "right": [],
+        "top": [],
+        "bottom": []
+      }
+    }
+  ],
+  [
+    {
+      "routes": ["battery"]
+    }
+  ]
+]
