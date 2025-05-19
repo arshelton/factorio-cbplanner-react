@@ -1,6 +1,12 @@
 import { create } from "zustand";
 import { deflateRaw, inflateRaw } from "pako";
-import { Grid } from "../types/mainTypes";
+import { Cell, Grid } from "../types/mainTypes";
+
+interface GridState {
+  grid: Grid;
+  setGrid: (grid: Grid) => void;
+  addCell: (key: string) => void;
+}
 
 const defaultGrid: () => Grid = () => {
   const defaultMap: Grid = new Map();
@@ -16,36 +22,11 @@ const defaultGrid: () => Grid = () => {
   return defaultMap;
 };
 
-interface GridState {
-  grid: Grid;
-  setGrid: (grid: Grid) => void;
-}
-
-function encodeGrid(state: Grid): string {
-  console.log("encodeGrid");
-  const json = JSON.stringify(state);
-  const deflated = deflateRaw(json);
-  return btoa(String.fromCharCode(...deflated));
-}
-
-function decodeGrid(base64: string): Grid {
-  console.log("decodeGrid");
-  try {
-    const binary = atob(base64);
-    const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
-    const json = inflateRaw(bytes, { to: "string" });
-    return JSON.parse(json) as Grid;
-  } catch (e) {
-    console.error("Failed to decode state from URL: ", e);
-    return defaultGrid();
-  }
-}
-
 const getInitialData = (): Grid => {
   const hash = window.location.hash;
   if (hash.startsWith("#grid=")) {
     try {
-      return decodeGrid(hash.slice(5));
+      return decodeGrid(hash.slice(6));
     } catch {
       console.log("Failed to decode URL state");
     }
@@ -53,13 +34,48 @@ const getInitialData = (): Grid => {
   return defaultGrid();
 };
 
-export const useGridState = create<GridState>()((set) => ({
+export const useGridState = create<GridState>()((set, get) => ({
   grid: getInitialData(),
 
   setGrid: (newGrid) => {
-    const nextState = newGrid;
-    const encoded = encodeGrid(nextState);
-    window.history.replaceState(null, "", `#grid=${encoded}`);
     set({ grid: newGrid });
+    const encoded = encodeGrid(newGrid);
+    window.history.replaceState(null, "", `#grid=${encoded}`);
+  },
+
+  addCell: (key) => {
+    const currentGrid = get().grid;
+    const newGrid = new Map(currentGrid);
+    newGrid.set(key, {
+      icons: [],
+      sideRoutes: {
+        left: [],
+        right: [],
+        top: [],
+        bottom: [],
+      },
+    });
+
+    get().setGrid(newGrid);
   },
 }));
+
+function encodeGrid(state: Grid): string {
+  const plain = Array.from(state.entries()); //Convert map to array for JSON serialization
+  const json = JSON.stringify(plain);
+  const deflated = deflateRaw(json);
+  return btoa(String.fromCharCode(...deflated));
+}
+
+function decodeGrid(base64: string): Grid {
+  try {
+    const binary = atob(base64);
+    const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0));
+    const json = inflateRaw(bytes, { to: "string" });
+    const entries: [string, Cell][] = JSON.parse(json);
+    return new Map(entries);
+  } catch (e) {
+    console.error("Failed to decode state from URL: ", e);
+    return defaultGrid();
+  }
+}

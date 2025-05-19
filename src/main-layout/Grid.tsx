@@ -2,12 +2,10 @@ import { useGridState } from "../data-store/dataStore";
 import AddButton from "./AddButton";
 import BusCellBlock from "./BusCellBlock";
 import RegularCellBlock from "./RegularCellBlock";
-import CellBlock from "./RegularCellBlock";
 import { getAddablePositions, getBoundingBox } from "./utils/gridUtils";
 
 function Grid() {
   const grid = useGridState((s) => s.grid);
-
   const { minRow, maxRow, minCol, maxCol } = getBoundingBox(grid);
   const addable = getAddablePositions(grid);
 
@@ -24,7 +22,7 @@ function Grid() {
         if ("routes" in cell) content = <BusCellBlock data={cell} />;
         else if ("sideRoutes" in cell)
           content = <RegularCellBlock data={cell} />;
-      } else if (addable.has(key)) content = <AddButton />;
+      } else if (addable.has(key)) content = <AddButton coord={key} />;
 
       cols.push(
         <div

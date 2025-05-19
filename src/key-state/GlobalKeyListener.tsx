@@ -7,13 +7,13 @@ const GlobalKeyListener = () => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Shift") setKey("shift", true);
-      //   if (e.key === "Control") setKey("ctrl", true);
-      //   if (e.key === "Alt") setKey("alt", true);
+      if (e.key === "Control") setKey("ctrl", true);
+      if (e.key === "Alt") setKey("alt", true);
     };
     const handleKeyUp = (e: KeyboardEvent) => {
       if (e.key === "Shift") setKey("shift", false);
-      //   if (e.key === "Control") setKey("ctrl", false);
-      //   if (e.key === "Alt") setKey("alt", false);
+      if (e.key === "Control") setKey("ctrl", false);
+      if (e.key === "Alt") setKey("alt", false);
     };
 
     window.addEventListener("keydown", handleKeyDown);
