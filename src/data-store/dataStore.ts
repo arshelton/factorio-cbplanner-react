@@ -62,6 +62,7 @@ export const useGridState = create<GridState>()((set, get) => ({
 
 function encodeGrid(state: Grid): string {
   const plain = Array.from(state.entries()); //Convert map to array for JSON serialization
+  console.log(plain);
   const json = JSON.stringify(plain);
   const deflated = deflateRaw(json);
   return btoa(String.fromCharCode(...deflated));

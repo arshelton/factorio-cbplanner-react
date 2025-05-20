@@ -26,7 +26,14 @@ function RegularCellBlock({ data }: { data: RegularCell }) {
       <div className="flex items-center justify-center hover:bg-base-content"></div>
       <div className="flex items-center justify-center hover:bg-base-content"></div>
       <div className="flex items-center justify-center hover:bg-base-content"></div>
-      <div className="flex items-center justify-center hover:bg-base-content"></div>
+      <div
+        className="flex items-center justify-center hover:bg-base-content"
+        onClick={() =>
+          (
+            document.getElementById("menu-modal") as HTMLDialogElement
+          )?.showModal()
+        }
+      ></div>
       <div className="flex items-center justify-center hover:bg-base-content"></div>
       <div className="flex items-center justify-center hover:bg-base-content"></div>
       <div className="flex items-center justify-center hover:bg-base-content"></div>
