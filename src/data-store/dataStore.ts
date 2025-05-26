@@ -6,6 +6,10 @@ interface GridState {
   grid: Grid;
   setGrid: (grid: Grid) => void;
   addCell: (key: string) => void;
+  addIcon: (key: string, icon: string) => void;
+
+  selectedKey: string | null;
+  setSelectedKey: (key: string | null) => void;
 }
 
 const defaultGrid: () => Grid = () => {
@@ -58,11 +62,40 @@ export const useGridState = create<GridState>()((set, get) => ({
 
     get().setGrid(newGrid);
   },
+
+  addIcon: (key, icon) => {
+    const currentGrid = get().grid;
+    const newGrid = new Map(currentGrid);
+
+    const currentCell = newGrid.get(key);
+    if (!currentCell) return;
+
+    let updatedCell;
+    if ("icons" in currentCell) {
+      updatedCell = {
+        ...currentCell,
+        icons: [...currentCell.icons, icon],
+      };
+    } else {
+      updatedCell = {
+        ...currentCell,
+        routes: [...currentCell.routes, icon],
+      };
+    }
+
+    newGrid.set(key, updatedCell);
+
+    get().setGrid(newGrid);
+  },
+
+  selectedKey: null,
+  setSelectedKey: (key) => {
+    set({ selectedKey: key });
+  },
 }));
 
 function encodeGrid(state: Grid): string {
   const plain = Array.from(state.entries()); //Convert map to array for JSON serialization
-  console.log(plain);
   const json = JSON.stringify(plain);
   const deflated = deflateRaw(json);
   return btoa(String.fromCharCode(...deflated));

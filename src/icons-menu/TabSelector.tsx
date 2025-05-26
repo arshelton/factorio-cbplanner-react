@@ -1,7 +1,9 @@
+import { TabKey } from "./menuTypes";
+
 type Props = {
-  tabs: string[];
-  activeTab: string;
-  setActiveTab: (tab: string) => void;
+  tabs: TabKey[];
+  activeTab: TabKey;
+  setActiveTab: (tab: TabKey) => void;
 };
 
 function TabSelector({ tabs, activeTab, setActiveTab }: Props) {
@@ -15,7 +17,7 @@ function TabSelector({ tabs, activeTab, setActiveTab }: Props) {
           }`}
           onClick={() => setActiveTab(tab)}
         >
-          {tab}
+          {tab.toUpperCase().replace(/-/g, " ") as string}
         </a>
       ))}
     </div>

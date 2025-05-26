@@ -1,29 +1,30 @@
-type SpriteInfo = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
+import { useGridState } from "../data-store/dataStore";
+import Icon from "./Icon";
 
 type Props = {
   name: string;
-  spriteInfo: SpriteInfo;
 };
 
-function IconButton({ name, spriteInfo }: Props) {
-  const { x, y, width, height } = spriteInfo;
+const SIZE = 60;
+
+function IconButton({ name }: Props) {
+  const { selectedKey, addIcon } = useGridState();
+
+  const handleClick = () => {
+    if (selectedKey) {
+      addIcon(selectedKey, name);
+    }
+    (document.getElementById("menu-modal") as HTMLDialogElement)?.close();
+  };
 
   return (
     <button
-      className="w-[40px] h-[40px] bg-no-repeat bg-[length:auto] bg-[image:var(--sprite-url)]"
-      style={{
-        backgroundImage: `url('/spritesheet.png')`,
-        backgroundPosition: `-${x}px -${y}px`,
-        width: `${width}px`,
-        height: `${height}px`,
-      }}
-      title={name}
-    />
+      className="btn btn-ghost p-0 min-w-0 min-h-0"
+      style={{ width: SIZE, height: SIZE }}
+      onClick={handleClick}
+    >
+      <Icon size={SIZE} iconName={name} />
+    </button>
   );
 }
 

@@ -1,3 +1,5 @@
+import { useGridState } from "../data-store/dataStore";
+import Icon from "../icons-menu/Icon";
 import { useKeyState } from "../key-state/keyState";
 import { RegularCell } from "../types/mainTypes";
 
@@ -12,8 +14,20 @@ type SubCellId =
   | "bottom"
   | "bottom-right";
 
-function RegularCellBlock({ data }: { data: RegularCell }) {
+type Props = {
+  data: RegularCell;
+  cellKey: string;
+};
+
+function RegularCellBlock({ data, cellKey }: Props) {
   const shiftDown = useKeyState((state) => state.shift);
+
+  const { setSelectedKey } = useGridState();
+
+  const handleClick = () => {
+    setSelectedKey(cellKey);
+    (document.getElementById("menu-modal") as HTMLDialogElement)?.showModal();
+  };
 
   return (
     <div
@@ -28,12 +42,10 @@ function RegularCellBlock({ data }: { data: RegularCell }) {
       <div className="flex items-center justify-center hover:bg-base-content"></div>
       <div
         className="flex items-center justify-center hover:bg-base-content"
-        onClick={() =>
-          (
-            document.getElementById("menu-modal") as HTMLDialogElement
-          )?.showModal()
-        }
-      ></div>
+        onClick={handleClick}
+      >
+        {data.icons[0] && <Icon iconName={data.icons[0]} size={24} />}
+      </div>
       <div className="flex items-center justify-center hover:bg-base-content"></div>
       <div className="flex items-center justify-center hover:bg-base-content"></div>
       <div className="flex items-center justify-center hover:bg-base-content"></div>
