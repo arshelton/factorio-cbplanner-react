@@ -95,7 +95,6 @@ export const useGridState = create<GridState>()((set, get) => ({
           },
         };
       } else {
-        console.log("hit");
         updatedCell = {
           ...currentCell,
           icons: [...currentCell.icons, icon],
