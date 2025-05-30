@@ -2,25 +2,23 @@ function HelpModal() {
   return (
     <dialog id="help-modal" className="modal">
       <div className="modal-box w-11/12 max-w-5xl max-h-[80vh] overflow-y-auto">
-        <h3 className="font-bold text-lg">How to Use</h3>
-        <h1 className="font-semibold underline text-md pt-4">Priority</h1>
+        <h3 className="font-bold text-lg pb-4">How to Use</h3>
+        <p className="">
+          The purpose of this app is to provide an easy UI to plan out a
+          grid/cityblock based factory in Factorio, replacing map tacks in the
+          base game. Basic controls are as follows:
+        </p>
         <ul className="list-disc ml-5">
-          <li>Implement better way to render material routes</li>
+          <li>Click the + buttons to add more cells.</li>
           <li>
-            Add ability to add cells between cells (add column, add row, etc.)
+            Click in the center of a cell to designate production in that cell.
           </li>
-          <li>Add click-and-drag routing for planning material routes</li>
-          <li>Add drag-and-drop to swap cell positions</li>
-        </ul>
-        <h1 className="font-semibold underline text-md pt-4">Potential</h1>
-        <ul className="list-disc ml-5">
-          <li>Add ability to merge cells into bigger cells</li>
-          <li>Add sub-planning for individual cells</li>
           <li>
-            Integrate blueprint system
-            <ul className="list-disc ml-5">
-              <li>Add total grid cost calculation</li>
-            </ul>
+            Click on the sides of a cell to designate side routes running
+            through a cell.
+          </li>
+          <li>
+            Hover over a side route to see icons running through that route.
           </li>
         </ul>
       </div>

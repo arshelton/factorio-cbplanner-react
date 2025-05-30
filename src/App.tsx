@@ -1,3 +1,4 @@
+import { Toaster } from "react-hot-toast";
 import Header from "./header/Header";
 import HelpModal from "./header/HelpModal";
 import HotkeysModal from "./header/HotkeysModal";
@@ -9,6 +10,7 @@ import Grid from "./main-layout/Grid";
 function App() {
   return (
     <div>
+      <Toaster />
       <GlobalKeyListener />
       <IconMenu />
       <HelpModal />

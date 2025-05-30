@@ -5,7 +5,7 @@ function Header() {
     <div className="navbar bg-base-200 shadow-sm">
       <div className="flex-1">
         <a className="btn btn-ghost btn-lg" href="/">
-          Factorio Planner
+          CityBlock Planner
         </a>
       </div>
       <div className="flex-none">

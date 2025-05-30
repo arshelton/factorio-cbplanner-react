@@ -8,11 +8,15 @@ type Props = {
 const SIZE = 60;
 
 function IconButton({ name }: Props) {
-  const { selectedKey, addIcon } = useGridState();
+  const { selectedKey, selectedSide, addIcon } = useGridState();
 
   const handleClick = () => {
     if (selectedKey) {
-      addIcon(selectedKey, name);
+      if (selectedSide !== null) {
+        addIcon(selectedKey, name, selectedSide);
+      } else {
+        addIcon(selectedKey, name);
+      }
     }
     (document.getElementById("menu-modal") as HTMLDialogElement)?.close();
   };

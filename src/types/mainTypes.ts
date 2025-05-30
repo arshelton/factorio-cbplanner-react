@@ -16,3 +16,10 @@ export type EmptyCell = null;
 export type Cell = BusCell | RegularCell | EmptyCell;
 export type Grid = Map<string, Cell>;
 export type Coord = [number, number];
+
+export enum Sides {
+  Top,
+  Right,
+  Bottom,
+  Left,
+}
