@@ -28,7 +28,7 @@ function Grid() {
 
       if (cell) {
         if ("routes" in cell) {
-          content = <BusCellBlock data={cell} />;
+          content = <BusCellBlock />;
         } else if ("sideRoutes" in cell) {
           content = <RegularCellBlock data={cell} cellKey={key} />;
         }
