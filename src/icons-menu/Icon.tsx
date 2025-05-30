@@ -37,7 +37,7 @@ function Icon({ size, iconName }: Props) {
     <div
       className="bg-no-repeat"
       style={{
-        backgroundImage: `url('/spritesheet.png')`,
+        backgroundImage: `url('${import.meta.env.BASE_URL}spritesheet.png')`,
         backgroundPosition: `-${adjX + adjPaddingX}px -${adjY + adjPaddingY}px`,
         backgroundSize: `${adjSSWidth}px ${adjSSHeight}px`,
         width: `${size}px`,
