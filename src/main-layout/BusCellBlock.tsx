@@ -1,20 +1,4 @@
-import { useKeyState } from "../key-state/keyState";
-import { BusCell } from "../types/mainTypes";
-
-type SubCellId =
-  | "top-left"
-  | "top"
-  | "top-right"
-  | "left"
-  | "center"
-  | "right"
-  | "bottom-left"
-  | "bottom"
-  | "bottom-right";
-
-function BusCellBlock({ data }: { data: BusCell }) {
-  const shiftDown = useKeyState((state) => state.shift);
-
+function BusCellBlock() {
   return (
     <div
       className="
