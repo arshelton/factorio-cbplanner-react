@@ -8,6 +8,8 @@ import GlobalKeyListener from "./key-state/GlobalKeyListener";
 import Grid from "./main-layout/Grid";
 
 function App() {
+  console.log("BASE_URL is: ", import.meta.env.BASE_URL);
+
   return (
     <div>
       <Toaster />
