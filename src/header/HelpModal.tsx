@@ -20,7 +20,7 @@ function HelpModal() {
           <li>
             Hover over a side route to see icons running through that route.
           </li>
-          <li>See hotkeys menu for deleting icons/cells.</li>
+          <li>See keybinds window (to the right) for deleting icons/cells.</li>
           <li>
             Grid state is stored in the URL, so bookmark URL to save or share.
           </li>
