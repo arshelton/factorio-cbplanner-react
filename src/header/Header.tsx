@@ -4,7 +4,10 @@ function Header() {
   return (
     <div className="navbar bg-base-200 shadow-sm">
       <div className="flex-1">
-        <a className="btn btn-ghost btn-lg" href="/">
+        <a
+          className="btn btn-ghost btn-lg"
+          href={`${import.meta.env.BASE_URL}`}
+        >
           CityBlock Planner
         </a>
       </div>
