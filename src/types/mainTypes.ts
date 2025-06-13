@@ -28,7 +28,7 @@ export type RoutePoint = {
 };
 export type Route = {
   id: string;
-  segments: RoutePoint[];
+  path: RoutePoint[];
   icon: string;
 };
 export type RouteMap = Map<string, Route>;
