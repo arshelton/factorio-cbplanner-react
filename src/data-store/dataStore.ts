@@ -1,32 +1,23 @@
 import { create } from "zustand";
 import { deflateRaw, inflateRaw } from "pako";
-import { Cell, Grid, SideRoutes, Sides } from "../types/mainTypes";
+import { Cell, Grid } from "../types/mainTypes";
 
 interface GridState {
   grid: Grid;
   setGrid: (grid: Grid) => void;
   addCell: (key: string) => void;
   removeCell: (key: string) => void;
-  addIcon: (key: string, icon: string, side?: Sides) => void;
-  clearIcons: (key: string, side?: Sides | null) => void;
+  addIcon: (key: string, icon: string) => void;
+  clearIcons: (key: string) => void;
 
   selectedKey: string | null;
   setSelectedKey: (key: string | null) => void;
-
-  selectedSide: Sides | null;
-  setSelectedSide: (side: Sides | null) => void;
 }
 
 const defaultGrid: () => Grid = () => {
   const defaultMap: Grid = new Map();
   defaultMap.set("0,0", {
     icons: [],
-    sideRoutes: {
-      left: [],
-      right: [],
-      top: [],
-      bottom: [],
-    },
   });
   return defaultMap;
 };
@@ -57,12 +48,6 @@ export const useGridState = create<GridState>()((set, get) => ({
     const newGrid = new Map(currentGrid);
     newGrid.set(key, {
       icons: [],
-      sideRoutes: {
-        left: [],
-        right: [],
-        top: [],
-        bottom: [],
-      },
     });
 
     get().setGrid(newGrid);
@@ -76,7 +61,7 @@ export const useGridState = create<GridState>()((set, get) => ({
     get().setGrid(newGrid);
   },
 
-  addIcon: (key, icon, side) => {
+  addIcon: (key, icon) => {
     const currentGrid = get().grid;
     const newGrid = new Map(currentGrid);
 
@@ -85,21 +70,10 @@ export const useGridState = create<GridState>()((set, get) => ({
 
     let updatedCell;
     if ("icons" in currentCell) {
-      if (side !== undefined) {
-        const sideKey = Sides[side].toLowerCase() as keyof SideRoutes;
-        updatedCell = {
-          ...currentCell,
-          sideRoutes: {
-            ...currentCell.sideRoutes,
-            [sideKey]: [...currentCell.sideRoutes[sideKey], icon],
-          },
-        };
-      } else {
-        updatedCell = {
-          ...currentCell,
-          icons: [...currentCell.icons, icon],
-        };
-      }
+      updatedCell = {
+        ...currentCell,
+        icons: [...currentCell.icons, icon],
+      };
     } else {
       updatedCell = {
         ...currentCell,
@@ -111,7 +85,7 @@ export const useGridState = create<GridState>()((set, get) => ({
     get().setGrid(newGrid);
   },
 
-  clearIcons: (key, side) => {
+  clearIcons: (key) => {
     const currentGrid = get().grid;
     const newGrid = new Map(currentGrid);
 
@@ -120,22 +94,10 @@ export const useGridState = create<GridState>()((set, get) => ({
 
     let updatedCell;
     if ("icons" in currentCell) {
-      if (side !== undefined && side !== null) {
-        const sideKey = Sides[side].toLowerCase() as keyof SideRoutes;
-
-        updatedCell = {
-          ...currentCell,
-          sideRoutes: {
-            ...currentCell.sideRoutes,
-            [sideKey]: [],
-          },
-        };
-      } else {
-        updatedCell = {
-          ...currentCell,
-          icons: [],
-        };
-      }
+      updatedCell = {
+        ...currentCell,
+        icons: [],
+      };
     } else {
       updatedCell = {
         ...currentCell,
@@ -150,11 +112,6 @@ export const useGridState = create<GridState>()((set, get) => ({
   selectedKey: null,
   setSelectedKey: (key) => {
     set({ selectedKey: key });
-  },
-
-  selectedSide: null,
-  setSelectedSide: (side) => {
-    set({ selectedSide: side });
   },
 }));
 
