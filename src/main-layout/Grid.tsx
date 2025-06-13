@@ -29,7 +29,7 @@ function Grid() {
       if (cell) {
         if ("routes" in cell) {
           content = <BusCellBlock />;
-        } else if ("sideRoutes" in cell) {
+        } else if ("icons" in cell) {
           content = <RegularCellBlock data={cell} cellKey={key} />;
         }
       } else if (addable.has(key)) {
