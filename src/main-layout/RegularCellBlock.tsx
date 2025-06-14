@@ -2,8 +2,8 @@ import toast from "react-hot-toast";
 import { useGridState } from "../data-store/dataStore";
 import Icon from "../icons-menu/Icon";
 import { useKeyState } from "../key-state/keyState";
-import { RegularCell } from "../types/mainTypes";
-import { useState } from "react";
+import { RegularCell, RoutePosition } from "../types/mainTypes";
+import { useRef, useState } from "react";
 
 type Props = {
   data: RegularCell;
@@ -17,7 +17,10 @@ function RegularCellBlock({ data, cellKey }: Props) {
 
   const shiftDown = useKeyState((state) => state.shift);
   const ctrlDown = useKeyState((state) => state.ctrl);
+
   const { setSelectedKey, clearIcons, removeCell } = useGridState();
+
+  const mousePos = useRef<RoutePosition | null>(null);
 
   const handleClick = () => {
     setSelectedKey(cellKey);
