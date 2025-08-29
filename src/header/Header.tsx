@@ -2,7 +2,7 @@ import { CircleHelpIcon, CommandIcon, WaypointsIcon } from "lucide-react";
 
 function Header() {
   return (
-    <div className="navbar bg-base-200 shadow-sm">
+    <div className="navbar bg-base-200 shadow-sm h-16 flex-none">
       <div className="flex-1">
         <a
           className="btn btn-ghost btn-lg"

@@ -2,72 +2,81 @@ import { useGridState } from "../data-store/dataStore";
 import AddButton from "./AddButton";
 import BusCellBlock from "./BusCellBlock";
 import RegularCellBlock from "./RegularCellBlock";
-import { getAddablePositions, getBoundingBox } from "./utils/gridUtils";
+import { getAddablePositions } from "./utils/gridUtils";
 
-const CELL_SIZE = 64; // 64 px = Tailwind's w-16/h-16
+import { CELL_SIZE } from "../config/config";
+import { useGridLayout } from "../hooks/useGridLayout";
 
 function Grid() {
   const grid = useGridState((s) => s.grid);
-  const { minRow, maxRow, minCol, maxCol } = getBoundingBox(grid);
   const addable = getAddablePositions(grid);
 
-  const numRows = maxRow - minRow + 3; // +1 to be inclusive, +2 for buffer
-  const numCols = maxCol - minCol + 3;
+  const { width, height, offsetX, offsetY, cellOffsetX, cellOffsetY } =
+    useGridLayout();
 
   const renderedCells: React.ReactNode[] = [];
 
-  for (let r = minRow - 1; r <= maxRow + 1; r++) {
-    for (let c = minCol - 1; c <= maxCol + 1; c++) {
-      const key = `${r},${c}`;
-      const cell = grid.get(key);
+  for (const [key, cell] of grid.entries()) {
+    const [row, col] = key.split(",").map(Number);
 
-      const left = c * CELL_SIZE;
-      const top = r * CELL_SIZE;
+    let content: React.ReactNode = null;
 
-      let content: React.ReactNode = null;
+    if (cell == null) return;
 
-      if (cell) {
-        if ("routes" in cell) {
-          content = <BusCellBlock />;
-        } else if ("icons" in cell) {
-          content = <RegularCellBlock data={cell} cellKey={key} />;
-        }
-      } else if (addable.has(key)) {
-        content = <AddButton coord={key} />;
-      }
+    if ("routes" in cell) {
+      content = <BusCellBlock />;
+    } else if ("icons" in cell) {
+      content = <RegularCellBlock data={cell} cellKey={key} />;
+    }
 
-      if (content) {
-        renderedCells.push(
-          <div
-            key={key}
-            className="absolute w-16 h-16 flex items-center justify-center border border-white/10 bg-gray-800"
-            style={{ left, top }}
-          >
-            {content}
-          </div>
-        );
-      }
+    if (content) {
+      renderedCells.push(
+        <div
+          key={key}
+          className="absolute flex items-center justify-center box-border border-white/10 bg-gray-800"
+          style={{
+            left: col * CELL_SIZE + cellOffsetX,
+            top: row * CELL_SIZE + cellOffsetY,
+            width: CELL_SIZE,
+            height: CELL_SIZE,
+          }}
+        >
+          {content}
+        </div>
+      );
     }
   }
 
-  const width = numCols * CELL_SIZE;
-  const height = numRows * CELL_SIZE;
+  for (const coord of addable) {
+    const [row, col] = coord.split(",").map(Number);
 
-  return (
-    <div className="flex-1 relative overflow-hidden w-screen h-screen">
+    renderedCells.push(
       <div
-        className="absolute"
+        key={`add-${coord}`}
+        className="absolute flex items-center justify-center"
         style={{
-          left: `calc(50vw - ${CELL_SIZE / 2}px)`,
-          top: `calc(50vh - ${CELL_SIZE / 2}px - 32px)`,
-          width,
-          height,
+          left: col * CELL_SIZE + cellOffsetX,
+          top: row * CELL_SIZE + cellOffsetY,
+          width: CELL_SIZE,
+          height: CELL_SIZE,
         }}
       >
-        <div className="relative w-full h-full" style={{ width, height }}>
-          {renderedCells}
-        </div>
+        <AddButton coord={coord} />
       </div>
+    );
+  }
+
+  return (
+    <div
+      className="absolute z-10"
+      style={{
+        width,
+        height,
+        left: `calc(50% + ${offsetX}px)`,
+        top: `calc(50% + ${offsetY}px)`,
+      }}
+    >
+      <div className="relative w-full h-full">{renderedCells}</div>
     </div>
   );
 }

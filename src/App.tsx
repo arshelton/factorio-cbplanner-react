@@ -6,19 +6,26 @@ import RoadMapModal from "./header/RoadMapModal";
 import IconMenu from "./icons-menu/IconMenu";
 import GlobalKeyListener from "./key-state/GlobalKeyListener";
 import Grid from "./main-layout/Grid";
+import RouteOverlaySVG from "./routes-layout/RouteOverlaySVG";
+import useRouteController from "./routes-layout/useRouteController";
 
 function App() {
+  useRouteController();
+
   return (
-    <div>
+    <div className="min-h-dvh flex flex-col">
       <Toaster />
       <GlobalKeyListener />
+
       <IconMenu />
       <HelpModal />
       <HotkeysModal />
       <RoadMapModal />
-      <div className="w-screen h-screen flex flex-col">
-        <Header />
+
+      <Header />
+      <div className="relative flex-1 overflow-hidden">
         <Grid />
+        <RouteOverlaySVG />
       </div>
     </div>
   );

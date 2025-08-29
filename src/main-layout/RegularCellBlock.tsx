@@ -1,9 +1,11 @@
 import toast from "react-hot-toast";
-import { useGridState } from "../data-store/dataStore";
-import Icon from "../icons-menu/Icon";
+import { useGridState, useRouteState } from "../data-store/dataStore";
 import { useKeyState } from "../key-state/keyState";
 import { RegularCell, RoutePosition } from "../types/mainTypes";
-import { useRef, useState } from "react";
+import { useRef } from "react";
+import { CELL_SIZE } from "../config/config";
+import RegularCellBlockOuterSection from "./RegularCellBlockOuterSection";
+import RegularCellBlockCenter from "./RegularCellBlockCenter";
 
 type Props = {
   data: RegularCell;
@@ -11,68 +13,90 @@ type Props = {
 };
 
 function RegularCellBlock({ data, cellKey }: Props) {
-  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(
-    null
-  );
+  // const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(
+  //   null
+  // );
 
   const shiftDown = useKeyState((state) => state.shift);
   const ctrlDown = useKeyState((state) => state.ctrl);
 
   const { setSelectedKey, clearIcons, removeCell } = useGridState();
+  const { hoveredPosition } = useRouteState();
+  const mouseDownOnCenter = useRef(false);
 
-  const mousePos = useRef<RoutePosition | null>(null);
-
-  const handleClick = () => {
+  const handleMouseDown = () => {
+    if (hoveredPosition?.position === RoutePosition.Center) {
+      mouseDownOnCenter.current = true;
+    }
+  };
+  const handleMouseUp = () => {
+    mouseDownOnCenter.current = false;
     setSelectedKey(cellKey);
 
-    if (shiftDown) {
-      clearIcons(cellKey);
-    } else if (ctrlDown) {
-      removeCell(cellKey);
-    } else {
-      if (data.icons.length >= 9) {
-        toast.error("Maximum Icons Reached");
-      } else {
-        (
-          document.getElementById("menu-modal") as HTMLDialogElement
-        )?.showModal();
+    if (hoveredPosition !== null) {
+      if (ctrlDown) {
+        removeCell(cellKey);
+      } else if (hoveredPosition.position === RoutePosition.Center) {
+        if (shiftDown) {
+          clearIcons(cellKey);
+        } else {
+          if (data.icons.length >= 9) {
+            toast.error("Maximum Icons Reached");
+          } else {
+            (
+              document.getElementById("menu-modal") as HTMLDialogElement
+            )?.showModal();
+          }
+        }
       }
     }
   };
 
   return (
     <div
-      className="
-        grid [grid-template-columns:16px_1fr_16px] [grid-template-rows:16px_1fr_16px] 
-        w-16 h-16 
-        bg-secondary border border-secondary-content"
-      onClick={handleClick}
+      className="grid bg-secondary border border-secondary-content"
+      style={{
+        width: CELL_SIZE,
+        height: CELL_SIZE,
+        gridTemplateColumns: "1fr 2fr 1fr",
+        gridTemplateRows: `1fr 2fr 1fr`,
+      }}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
     >
-      <div className={`w-4 h-4 relative`}></div>
-      <div className={`flex items-center justify-center`}></div>
-      <div className={`w-4 h-4 relative`}></div>
-      <div className={`flex items-center justify-center`}></div>
-      <div className="flex items-center justify-center hover:bg-base-content overflow-hidden">
-        {data.icons.length === 1 && <Icon iconName={data.icons[0]} size={32} />}
-        {data.icons.length >= 2 && data.icons.length <= 4 && (
-          <div className="grid grid-cols-2 grid-rows-2">
-            {data.icons.map((icon, i) => (
-              <Icon key={i} iconName={icon} size={16} />
-            ))}
-          </div>
-        )}
-        {data.icons.length >= 5 && data.icons.length <= 9 && (
-          <div className="grid grid-cols-3 grid-rows-3 gap-[1px]">
-            {data.icons.map((icon, i) => (
-              <Icon key={i} iconName={icon} size={10} />
-            ))}
-          </div>
-        )}
-      </div>
-      <div className={`flex items-center justify-center`}></div>
-      <div className={`w-4 h-4 relative`}></div>
-      <div className={`flex items-center justify-center`}></div>
-      <div className={`w-4 h-4 relative`}></div>
+      <RegularCellBlockOuterSection
+        cellKey={cellKey}
+        position={RoutePosition.TopLeft}
+      />
+      <RegularCellBlockOuterSection
+        cellKey={cellKey}
+        position={RoutePosition.Top}
+      />
+      <RegularCellBlockOuterSection
+        cellKey={cellKey}
+        position={RoutePosition.TopRight}
+      />
+      <RegularCellBlockOuterSection
+        cellKey={cellKey}
+        position={RoutePosition.Left}
+      />
+      <RegularCellBlockCenter cellData={data} cellKey={cellKey} />
+      <RegularCellBlockOuterSection
+        cellKey={cellKey}
+        position={RoutePosition.Right}
+      />
+      <RegularCellBlockOuterSection
+        cellKey={cellKey}
+        position={RoutePosition.BottomLeft}
+      />
+      <RegularCellBlockOuterSection
+        cellKey={cellKey}
+        position={RoutePosition.Bottom}
+      />
+      <RegularCellBlockOuterSection
+        cellKey={cellKey}
+        position={RoutePosition.BottomRight}
+      />
 
       {/* TOOLTIP */}
       {/* {

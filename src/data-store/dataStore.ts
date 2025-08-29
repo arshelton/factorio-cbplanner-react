@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { deflateRaw, inflateRaw } from "pako";
-import { Cell, Grid, Route, RouteMap } from "../types/mainTypes";
+import { Cell, Grid, Route, RouteMap, RoutePoint } from "../types/mainTypes";
+import getDummyRouteMap from "../testing/dummyRouteMap";
 
 interface GridState {
   grid: Grid;
@@ -44,8 +45,7 @@ export const useGridState = create<GridState>()((set, get) => ({
   },
 
   addCell: (key) => {
-    const currentGrid = get().grid;
-    const newGrid = new Map(currentGrid);
+    const newGrid = new Map(get().grid);
     newGrid.set(key, {
       icons: [],
     });
@@ -54,83 +54,77 @@ export const useGridState = create<GridState>()((set, get) => ({
   },
 
   removeCell: (key) => {
-    const currentGrid = get().grid;
-    const newGrid = new Map(currentGrid);
+    const newGrid = new Map(get().grid);
     newGrid.delete(key);
 
     get().setGrid(newGrid);
   },
 
   addIcon: (key, icon) => {
-    const currentGrid = get().grid;
-    const newGrid = new Map(currentGrid);
+    const newGrid = new Map(get().grid);
 
     const currentCell = newGrid.get(key);
-    if (!currentCell) return;
+    if (!currentCell || "isHorizontal" in currentCell) return;
 
-    let updatedCell;
-    if ("icons" in currentCell) {
-      updatedCell = {
-        ...currentCell,
-        icons: [...currentCell.icons, icon],
-      };
-    } else {
-      updatedCell = {
-        ...currentCell,
-        routes: [...currentCell.routes, icon],
-      };
-    }
+    newGrid.set(key, {
+      ...currentCell,
+      icons: [...currentCell.icons, icon],
+    });
 
-    newGrid.set(key, updatedCell);
     get().setGrid(newGrid);
   },
 
   clearIcons: (key) => {
-    const currentGrid = get().grid;
-    const newGrid = new Map(currentGrid);
+    const newGrid = new Map(get().grid);
 
     const currentCell = newGrid.get(key);
-    if (!currentCell) return;
+    if (!currentCell || "isHorizontal" in currentCell) return;
 
-    let updatedCell;
-    if ("icons" in currentCell) {
-      updatedCell = {
-        ...currentCell,
-        icons: [],
-      };
-    } else {
-      updatedCell = {
-        ...currentCell,
-        routes: [],
-      };
-    }
-
+    const updatedCell = {
+      ...currentCell,
+      icons: [],
+    };
     newGrid.set(key, updatedCell);
+
     get().setGrid(newGrid);
   },
 
   selectedKey: null,
-  setSelectedKey: (key) => {
-    set({ selectedKey: key });
-  },
+  setSelectedKey: (key) => set({ selectedKey: key }),
 }));
 
 /////////////////////////////////////////////////////
 interface RouteState {
   routeMap: RouteMap;
   setRouteMap: (routeMap: RouteMap) => void;
+  addRoute: (icon: string, origin: RoutePoint) => number;
+  extendRoute: (id: number, nextPoint: RoutePoint) => void;
+  pruneRoute: (id: number, prunePoint: RoutePoint) => void;
+  deleteRoute: (id: number) => void;
+  branchRoute: (id: number, branchPoint: RoutePoint) => void;
+
+  nextId: number;
+
+  hoveredPosition: RoutePoint | null;
+  setHoveredPosition: (hoveredPosition: RoutePoint | null) => void;
 }
 
 const defaultRouteMap: () => RouteMap = () => {
-  const defaultMap: RouteMap = new Map<string, Route>();
-  return defaultMap;
+  return new Map<number, Route>();
 };
 
 const getInitialRoutes = (): RouteMap => {
   const encoded = getHashParam("routes");
   if (encoded) {
     try {
-      return decodeState<Route>(encoded);
+      const decoded = decodeState<Route>(encoded);
+
+      const routeMap = new Map<number, Route>();
+      for (const [key, val] of decoded.entries()) {
+        routeMap.set(Number(key), val);
+      }
+
+      return routeMap;
     } catch {
       console.log("Failed to decode URL stat for Routes");
     }
@@ -138,13 +132,94 @@ const getInitialRoutes = (): RouteMap => {
   return defaultRouteMap();
 };
 
+const getInitialNextId = (): number => {
+  let maxId = 0;
+  const initialRoutes = getInitialRoutes();
+  for (const key of initialRoutes.keys()) {
+    maxId = key > maxId ? key : maxId;
+  }
+  return maxId;
+};
+
 export const useRouteState = create<RouteState>()((set, get) => ({
   routeMap: getInitialRoutes(),
   setRouteMap: (newRouteMap) => {
     set({ routeMap: newRouteMap });
-    const encoded = encodeState<Route>(newRouteMap);
+
+    const stringMap = new Map<string, Route>();
+    for (const [key, val] of newRouteMap.entries()) {
+      stringMap.set(String(key), val);
+    }
+    const encoded = encodeState<Route>(stringMap);
+
     updateHashParam("routes", encoded);
   },
+
+  addRoute: (icon, origin) => {
+    const newRouteMap = new Map(get().routeMap);
+    const id = get().nextId;
+
+    const newRoute = {
+      icon: icon,
+      path: [origin],
+    };
+
+    newRouteMap.set(id, newRoute);
+
+    set({
+      nextId: id + 1,
+    });
+    get().setRouteMap(newRouteMap);
+    return id;
+  },
+
+  deleteRoute: (id) => {
+    const newRouteMap = new Map(get().routeMap);
+    newRouteMap.delete(id);
+    get().setRouteMap(newRouteMap);
+  },
+
+  extendRoute: (id, nextPoint) => {
+    const newRouteMap = new Map(get().routeMap);
+
+    const currentRoute = newRouteMap.get(id);
+    if (!currentRoute) return;
+
+    newRouteMap.set(id, {
+      ...currentRoute,
+      path: [...currentRoute.path, nextPoint],
+    });
+
+    get().setRouteMap(newRouteMap);
+  },
+
+  //MAY NEED TO ADD LOGIC TO DEAL WITH DOWNSTREAM BRANCHES HERE
+  pruneRoute: (id, prunePoint) => {
+    const newRouteMap = new Map(get().routeMap);
+
+    const currentRoute = newRouteMap.get(id);
+    if (!currentRoute) return;
+
+    const pruneIndex = currentRoute.path.indexOf(prunePoint);
+    if (pruneIndex < 1) {
+      get().deleteRoute(id);
+      return;
+    }
+
+    newRouteMap.set(id, {
+      ...currentRoute,
+      path: currentRoute.path.slice(0, pruneIndex + 1),
+    });
+
+    get().setRouteMap(newRouteMap);
+  },
+
+  branchRoute: (route, branchPoint) => {},
+
+  nextId: getInitialNextId(),
+
+  hoveredPosition: null,
+  setHoveredPosition: (hoveredPosition) => set({ hoveredPosition }),
 }));
 
 /////////////////////////////////////////////////

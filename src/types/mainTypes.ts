@@ -1,7 +1,7 @@
 export type Icons = string[];
 
 export type BusCell = {
-  routes: Icons;
+  isHorizontal: boolean;
 };
 export type RegularCell = {
   icons: Icons;
@@ -27,10 +27,9 @@ export type RoutePoint = {
   position: RoutePosition;
 };
 export type Route = {
-  id: string;
   path: RoutePoint[];
   icon: string;
 };
-export type RouteMap = Map<string, Route>;
+export type RouteMap = Map<number, Route>;
 
 export type Coord = [number, number];
