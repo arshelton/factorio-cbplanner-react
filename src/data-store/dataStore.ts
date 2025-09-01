@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { deflateRaw, inflateRaw } from "pako";
 import { Cell, Grid, Route, RouteMap, RoutePoint } from "../types/mainTypes";
-import getDummyRouteMap from "../testing/dummyRouteMap";
 
 interface GridState {
   grid: Grid;
