@@ -1,15 +1,15 @@
-import { JSX, useState } from "react";
+import { JSX } from "react";
 import { useRouteState } from "../data-store/dataStore";
 import { routePointToPixel } from "./utils/routeUtils";
 import { useGridLayout } from "../hooks/useGridLayout";
 
 function RouteOverlaySVG() {
   const routeMap = useRouteState((s) => s.routeMap);
+  const hoveredRoute = useRouteState((s) => s.hoveredRoute);
+  const setHoveredRoute = useRouteState((s) => s.setHoveredRoute);
   const isDrawingRoute = useRouteState((s) => s.isDrawingRoute);
   const { width, height, offsetX, offsetY, cellOffsetX, cellOffsetY } =
     useGridLayout();
-
-  const [hoveredRoute, setHoveredRoute] = useState<number | null>(null);
 
   const routeLines: JSX.Element[] = [];
 

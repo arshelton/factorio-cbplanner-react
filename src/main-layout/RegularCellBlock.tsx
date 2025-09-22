@@ -94,28 +94,6 @@ function RegularCellBlock({ data, cellKey }: Props) {
         cellKey={cellKey}
         position={RoutePosition.BottomRight}
       />
-
-      {/* TOOLTIP */}
-      {/* {
-        tooltipPos 
-         && (
-          <div
-            className="absolute z-50 bg-primary border border-primary-content p-1 shadow"
-            style={{
-              position: "fixed",
-              top: `${tooltipPos.y + 8}px`,
-              left: `${tooltipPos.x + 8}px`,
-            }}
-          >
-            {data.sideRoutes[
-              Sides[sideHovered].toLowerCase() as keyof typeof data.sideRoutes
-            ].map((icon, i) => (
-              <div key={i} className="flex items-center">
-                <Icon iconName={icon} size={16} />
-              </div>
-            ))}
-          </div>
-        )} */}
     </div>
   );
 }

@@ -8,6 +8,7 @@ import GlobalKeyListener from "./key-state/GlobalKeyListener";
 import Grid from "./main-layout/Grid";
 import RouteOverlaySVG from "./routes-layout/RouteOverlaySVG";
 import useRouteController from "./routes-layout/useRouteController";
+import RouteIconsTooltip from "./routes-layout/RouteIconsTooltip";
 
 function App() {
   useRouteController();
@@ -21,6 +22,8 @@ function App() {
       <HelpModal />
       <HotkeysModal />
       <RoadMapModal />
+
+      <RouteIconsTooltip />
 
       <Header />
       <div className="relative flex-1 overflow-hidden">

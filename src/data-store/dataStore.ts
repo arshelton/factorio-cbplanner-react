@@ -107,6 +107,9 @@ interface RouteState {
   hoveredPosition: RoutePoint | null;
   setHoveredPosition: (hoveredPosition: RoutePoint | null) => void;
 
+  hoveredRoute: number | null;
+  setHoveredRoute: (hoveredRoute: number | null) => void;
+
   isDrawingRoute: boolean;
   setIsDrawingRoute: (isDrawingRoute: boolean) => void;
 }
@@ -224,6 +227,9 @@ export const useRouteState = create<RouteState>()((set, get) => ({
 
   hoveredPosition: null,
   setHoveredPosition: (hoveredPosition) => set({ hoveredPosition }),
+
+  hoveredRoute: null,
+  setHoveredRoute: (hoveredRoute) => set({ hoveredRoute }),
 
   isDrawingRoute: false,
   setIsDrawingRoute: (isDrawingRoute) => set({ isDrawingRoute }),
