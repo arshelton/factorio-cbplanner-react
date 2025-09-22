@@ -28,7 +28,7 @@ const getInitialGrid = (): Grid => {
     try {
       return decodeState<Cell>(encoded);
     } catch {
-      console.log("Failed to decode URL state");
+      console.log("Failed to decode URL state for grid");
     }
   }
   return defaultGrid();
@@ -128,7 +128,7 @@ const getInitialRoutes = (): RouteMap => {
 
       return routeMap;
     } catch {
-      console.log("Failed to decode URL stat for Routes");
+      console.log("Failed to decode URL state for Routes");
     }
   }
   return defaultRouteMap();
@@ -176,7 +176,6 @@ export const useRouteState = create<RouteState>()((set, get) => ({
   },
 
   deleteRoute: (id) => {
-    console.log("DELETE: " + id);
     const newRouteMap = new Map(get().routeMap);
     newRouteMap.delete(id);
     get().setRouteMap(newRouteMap);
@@ -203,15 +202,6 @@ export const useRouteState = create<RouteState>()((set, get) => ({
     const currentRoute = newRouteMap.get(id);
     if (!currentRoute) return;
 
-    console.log(currentRoute.path);
-    console.log(
-      "ID: " +
-        id +
-        "\nPrune Point: " +
-        prunePoint.key +
-        "," +
-        prunePoint.position
-    );
     const pruneIndex = currentRoute.path.findIndex(
       (p) => p.key === prunePoint.key && p.position === prunePoint.position
     );
