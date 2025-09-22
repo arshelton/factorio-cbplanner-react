@@ -28,10 +28,10 @@ function RegularCellBlock({ data, cellKey }: Props) {
   const handleMouseUp = () => {
     setSelectedKey(cellKey);
 
-    if (hoveredPosition !== null) {
+    if (hoveredPosition !== null && mouseDownOnCenter.current == true) {
       if (ctrlDown) {
         removeCell(cellKey);
-      } else if (mouseDownOnCenter.current == true) {
+      } else {
         if (shiftDown) {
           clearIcons(cellKey);
         } else {
