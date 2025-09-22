@@ -106,6 +106,9 @@ interface RouteState {
 
   hoveredPosition: RoutePoint | null;
   setHoveredPosition: (hoveredPosition: RoutePoint | null) => void;
+
+  isDrawingRoute: boolean;
+  setIsDrawingRoute: (isDrawingRoute: boolean) => void;
 }
 
 const defaultRouteMap: () => RouteMap = () => {
@@ -173,6 +176,7 @@ export const useRouteState = create<RouteState>()((set, get) => ({
   },
 
   deleteRoute: (id) => {
+    console.log("DELETE: " + id);
     const newRouteMap = new Map(get().routeMap);
     newRouteMap.delete(id);
     get().setRouteMap(newRouteMap);
@@ -199,8 +203,19 @@ export const useRouteState = create<RouteState>()((set, get) => ({
     const currentRoute = newRouteMap.get(id);
     if (!currentRoute) return;
 
-    const pruneIndex = currentRoute.path.indexOf(prunePoint);
-    if (pruneIndex < 1) {
+    console.log(currentRoute.path);
+    console.log(
+      "ID: " +
+        id +
+        "\nPrune Point: " +
+        prunePoint.key +
+        "," +
+        prunePoint.position
+    );
+    const pruneIndex = currentRoute.path.findIndex(
+      (p) => p.key === prunePoint.key && p.position === prunePoint.position
+    );
+    if (pruneIndex === 0) {
       get().deleteRoute(id);
       return;
     }
@@ -219,6 +234,9 @@ export const useRouteState = create<RouteState>()((set, get) => ({
 
   hoveredPosition: null,
   setHoveredPosition: (hoveredPosition) => set({ hoveredPosition }),
+
+  isDrawingRoute: false,
+  setIsDrawingRoute: (isDrawingRoute) => set({ isDrawingRoute }),
 }));
 
 /////////////////////////////////////////////////

@@ -13,10 +13,6 @@ type Props = {
 };
 
 function RegularCellBlock({ data, cellKey }: Props) {
-  // const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(
-  //   null
-  // );
-
   const shiftDown = useKeyState((state) => state.shift);
   const ctrlDown = useKeyState((state) => state.ctrl);
 
@@ -30,13 +26,12 @@ function RegularCellBlock({ data, cellKey }: Props) {
     }
   };
   const handleMouseUp = () => {
-    mouseDownOnCenter.current = false;
     setSelectedKey(cellKey);
 
     if (hoveredPosition !== null) {
       if (ctrlDown) {
         removeCell(cellKey);
-      } else if (hoveredPosition.position === RoutePosition.Center) {
+      } else if (mouseDownOnCenter.current == true) {
         if (shiftDown) {
           clearIcons(cellKey);
         } else {
@@ -50,6 +45,8 @@ function RegularCellBlock({ data, cellKey }: Props) {
         }
       }
     }
+
+    mouseDownOnCenter.current = false;
   };
 
   return (
