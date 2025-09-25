@@ -23,8 +23,8 @@ function Grid() {
 
     if (cell == null) return;
 
-    if ("routes" in cell) {
-      content = <BusCellBlock />;
+    if ("isHorizontal" in cell) {
+      content = <BusCellBlock cellKey={key} />;
     } else if ("icons" in cell) {
       content = <RegularCellBlock data={cell} cellKey={key} />;
     }

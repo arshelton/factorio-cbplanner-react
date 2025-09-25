@@ -15,9 +15,12 @@ type Props = {
 function RegularCellBlock({ data, cellKey }: Props) {
   const shiftDown = useKeyState((state) => state.shift);
   const ctrlDown = useKeyState((state) => state.ctrl);
+  const altDown = useKeyState((state) => state.alt);
 
-  const { setSelectedKey, clearIcons, removeCell } = useGridState();
-  const { hoveredPosition } = useRouteState();
+  const { setSelectedKey, clearIcons, removeCell, convertToBus } =
+    useGridState();
+  const { areThereRoutesInCell, hoveredPosition, isDrawingRoute } =
+    useRouteState();
   const mouseDownOnCenter = useRef(false);
 
   const handleMouseDown = () => {
@@ -27,10 +30,15 @@ function RegularCellBlock({ data, cellKey }: Props) {
   };
   const handleMouseUp = () => {
     setSelectedKey(cellKey);
-
-    if (hoveredPosition !== null && mouseDownOnCenter.current == true) {
-      if (ctrlDown) {
+    if (
+      hoveredPosition !== null &&
+      mouseDownOnCenter.current == true &&
+      !isDrawingRoute
+    ) {
+      if (ctrlDown && !areThereRoutesInCell(cellKey)) {
         removeCell(cellKey);
+      } else if (altDown && !areThereRoutesInCell(cellKey)) {
+        convertToBus(cellKey);
       } else {
         if (shiftDown) {
           clearIcons(cellKey);

@@ -7,6 +7,8 @@ interface GridState {
   setGrid: (grid: Grid) => void;
   addCell: (key: string) => void;
   removeCell: (key: string) => void;
+  convertToBus: (key: string) => void;
+  convertToRegular: (key: string) => void;
   addIcon: (key: string, icon: string) => void;
   clearIcons: (key: string) => void;
 
@@ -59,6 +61,24 @@ export const useGridState = create<GridState>()((set, get) => ({
     get().setGrid(newGrid);
   },
 
+  convertToBus: (key) => {
+    const newGrid = new Map(get().grid);
+    newGrid.set(key, {
+      isHorizontal: false,
+    });
+
+    get().setGrid(newGrid);
+  },
+
+  convertToRegular: (key) => {
+    const newGrid = new Map(get().grid);
+    newGrid.set(key, {
+      icons: [],
+    });
+
+    get().setGrid(newGrid);
+  },
+
   addIcon: (key, icon) => {
     const newGrid = new Map(get().grid);
 
@@ -101,6 +121,8 @@ interface RouteState {
   pruneRoute: (id: number, prunePoint: RoutePoint) => void;
   deleteRoute: (id: number) => void;
   branchRoute: (id: number, branchPoint: RoutePoint) => void;
+
+  areThereRoutesInCell: (key: string) => boolean;
 
   nextId: number;
 
@@ -222,6 +244,12 @@ export const useRouteState = create<RouteState>()((set, get) => ({
   },
 
   branchRoute: (route, branchPoint) => {},
+
+  areThereRoutesInCell: (key) => {
+    return Array.from(get().routeMap.values()).some((route) =>
+      route.path.some((routePoint) => routePoint.key == key)
+    );
+  },
 
   nextId: getInitialNextId(),
 

@@ -13,12 +13,11 @@ export default function useRouteController() {
   //Handle window mouse down and up events
   useEffect(() => {
     const handleMouseDown = () => {
-      const { hoveredPosition, setIsDrawingRoute } = useRouteState.getState();
+      const { hoveredPosition } = useRouteState.getState();
       if (!hoveredPosition) return;
 
       if (hoveredPosition.position == RoutePosition.Center) {
         mouseDownOnCenter.current = true;
-        setIsDrawingRoute(true);
       }
     };
 
@@ -41,6 +40,8 @@ export default function useRouteController() {
   useEffect(() => {
     if (hoveredPosition) {
       if (mouseDownOnCenter.current) {
+        useRouteState.getState().setIsDrawingRoute(true);
+
         const originPoint = {
           ...hoveredPosition,
           position: RoutePosition.Center,
