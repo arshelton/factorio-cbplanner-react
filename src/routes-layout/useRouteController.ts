@@ -89,7 +89,7 @@ export default function useRouteController() {
     const cell = grid.get(originPosition.key);
 
     if (!cell) return null;
-    if ("icons" in cell) {
+    if ("icons" in cell && cell.icons.length > 0) {
       return cell.icons[0];
     }
     return null;
