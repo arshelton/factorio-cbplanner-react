@@ -28,6 +28,7 @@ function RouteIconsTooltip() {
     !isDrawingRoute &&
     hoveredRoute != null &&
     routeMap.get(hoveredRoute) != undefined &&
+    routeMap.get(hoveredRoute)!.icon !== null &&
     tooltipPos != null && (
       <div
         className="absolute z-50 bg-primary border border-primary-content p-1 shadow"

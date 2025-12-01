@@ -1,10 +1,11 @@
 import { useEffect, useRef } from "react";
-import { useRouteState } from "../data-store/dataStore";
+import { useRouteState, useGridState } from "../data-store/dataStore";
 import { RoutePoint, RoutePosition } from "../types/mainTypes";
 
 export default function useRouteController() {
   const { hoveredPosition, addRoute, extendRoute, pruneRoute } =
     useRouteState();
+  const grid = useGridState((s) => s.grid);
 
   const mouseDownOnCenter = useRef(false);
   const activeId = useRef<number | null>(null);
@@ -46,7 +47,10 @@ export default function useRouteController() {
           ...hoveredPosition,
           position: RoutePosition.Center,
         };
-        activeId.current = addRoute("rail", originPoint);
+        activeId.current = addRoute(
+          getOriginIcon(hoveredPosition),
+          originPoint
+        );
         extendRoute(activeId.current, hoveredPosition);
 
         currentRoute.current = [originPoint, hoveredPosition];
@@ -80,4 +84,14 @@ export default function useRouteController() {
     window.addEventListener("dragstart", handler);
     return () => window.removeEventListener("dragstart", handler);
   }, []);
+
+  const getOriginIcon = (originPosition: RoutePoint): string | null => {
+    const cell = grid.get(originPosition.key);
+
+    if (!cell) return null;
+    if ("icons" in cell) {
+      return cell.icons[0];
+    }
+    return null;
+  };
 }

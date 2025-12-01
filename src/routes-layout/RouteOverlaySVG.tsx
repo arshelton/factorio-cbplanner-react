@@ -183,6 +183,7 @@ function RouteOverlaySVG() {
           strokeWidth={hoveredRoute === id && !isDrawingRoute ? 4 : 3}
           onMouseOver={() => setHoveredRoute(id)}
           onMouseLeave={() => setHoveredRoute(null)}
+          pointerEvents="auto"
         />
       );
     }

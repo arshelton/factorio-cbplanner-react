@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { deflateRaw, inflateRaw } from "pako";
 import { Cell, Grid, Route, RouteMap, RoutePoint } from "../types/mainTypes";
 
+//#region Grid State
 interface GridState {
   grid: Grid;
   setGrid: (grid: Grid) => void;
@@ -111,12 +112,13 @@ export const useGridState = create<GridState>()((set, get) => ({
   selectedKey: null,
   setSelectedKey: (key) => set({ selectedKey: key }),
 }));
+//#endregion
 
-/////////////////////////////////////////////////////
+//#region Route State
 interface RouteState {
   routeMap: RouteMap;
   setRouteMap: (routeMap: RouteMap) => void;
-  addRoute: (icon: string, origin: RoutePoint) => number;
+  addRoute: (icon: string | null, origin: RoutePoint) => number;
   extendRoute: (id: number, nextPoint: RoutePoint) => void;
   pruneRoute: (id: number, prunePoint: RoutePoint) => void;
   deleteRoute: (id: number) => void;
@@ -262,8 +264,9 @@ export const useRouteState = create<RouteState>()((set, get) => ({
   isDrawingRoute: false,
   setIsDrawingRoute: (isDrawingRoute) => set({ isDrawingRoute }),
 }));
+//#endregion
 
-/////////////////////////////////////////////////
+//#region URL Encoding
 function encodeState<T>(state: Map<string, T>): string {
   const plain = Array.from(state.entries()); //Convert map to array for JSON serialization
   const json = JSON.stringify(plain);
@@ -294,3 +297,4 @@ function updateHashParam(key: string, value: string) {
   params.set(key, value);
   window.history.replaceState(null, "", `#${params.toString()}`);
 }
+//#endregion
