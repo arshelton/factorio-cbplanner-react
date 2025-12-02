@@ -1,6 +1,6 @@
 import { JSX } from "react";
 import { useRouteState } from "../data-store/dataStore";
-import { routePointToPixel } from "./utils/routeUtils";
+import { getIconColor, routePointToPixel } from "./utils/routeUtils";
 import { useGridLayout } from "../hooks/useGridLayout";
 import { ROUTE_SPACING } from "../config/config";
 
@@ -179,7 +179,11 @@ function RouteOverlaySVG() {
           y1={startY + cellOffsetY}
           x2={endX + cellOffsetX}
           y2={endY + cellOffsetY}
-          stroke="white"
+          stroke={
+            routeMap.get(id)?.icon
+              ? getIconColor(routeMap.get(id)!.icon!)
+              : "white"
+          }
           strokeWidth={hoveredRoute === id && !isDrawingRoute ? 4 : 3}
           onMouseOver={() => setHoveredRoute(id)}
           onMouseLeave={() => setHoveredRoute(null)}

@@ -1,6 +1,7 @@
 import { CELL_SIZE } from "../../config/config";
 import { keyToCoord } from "../../main-layout/utils/gridUtils";
 import { RoutePosition, RoutePoint } from "../../types/mainTypes";
+import iconColors from "../icon-colors.json";
 
 export const routePointToPixel = (point: RoutePoint): [number, number] => {
   const [row, col] = keyToCoord(point.key);
@@ -35,4 +36,11 @@ export const routePositionOffset = (pos: RoutePosition): [number, number] => {
       console.warn("RoutePosition.Bus not implemented");
       return [h, h]; //TODO: DYNAMIC BUS ROUTING
   }
+};
+
+export const getIconColor = (icon: string): string => {
+  if (icon in iconColors) {
+    return iconColors[icon as keyof typeof iconColors];
+  }
+  return "white";
 };
