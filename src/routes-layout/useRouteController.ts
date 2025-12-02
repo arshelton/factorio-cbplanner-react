@@ -39,6 +39,16 @@ export default function useRouteController() {
 
   //Handle route drawing when mouse was pressed on center
   useEffect(() => {
+    const getOriginIcon = (originPosition: RoutePoint): string | null => {
+      const cell = grid.get(originPosition.key);
+
+      if (!cell) return null;
+      if ("icons" in cell && cell.icons.length > 0) {
+        return cell.icons[0];
+      }
+      return null;
+    };
+
     if (hoveredPosition) {
       if (mouseDownOnCenter.current) {
         useRouteState.getState().setIsDrawingRoute(true);
@@ -76,7 +86,7 @@ export default function useRouteController() {
       }
     }
     mouseDownOnCenter.current = false;
-  }, [hoveredPosition, addRoute, extendRoute, pruneRoute]);
+  }, [hoveredPosition, addRoute, extendRoute, pruneRoute, grid]);
 
   //Prevent annoying default dnd behavior
   useEffect(() => {
@@ -84,14 +94,4 @@ export default function useRouteController() {
     window.addEventListener("dragstart", handler);
     return () => window.removeEventListener("dragstart", handler);
   }, []);
-
-  const getOriginIcon = (originPosition: RoutePoint): string | null => {
-    const cell = grid.get(originPosition.key);
-
-    if (!cell) return null;
-    if ("icons" in cell && cell.icons.length > 0) {
-      return cell.icons[0];
-    }
-    return null;
-  };
 }
