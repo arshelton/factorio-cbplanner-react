@@ -43,6 +43,7 @@ function RegularCellBlock({ data, cellKey }: Props) {
         setHoveredPosition(null);
         removeCell(cellKey);
       } else if (altDown && !areThereRoutesInCell(cellKey)) {
+        setHoveredPosition(null);
         convertToBus(cellKey);
       } else {
         if (shiftDown) {
