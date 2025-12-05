@@ -3,15 +3,24 @@ import { useRouteState } from "../data-store/dataStore";
 import { getIconColor, routePointToPixel } from "./utils/routeUtils";
 import { useGridLayout } from "../hooks/useGridLayout";
 import { ROUTE_SPACING } from "../config/config";
+import { useKeyState } from "../key-state/keyState";
 
 function RouteOverlaySVG() {
   const routeMap = useRouteState((s) => s.routeMap);
   const hoveredRoute = useRouteState((s) => s.hoveredRoute);
   const setHoveredRoute = useRouteState((s) => s.setHoveredRoute);
   const isDrawingRoute = useRouteState((s) => s.isDrawingRoute);
+  const deleteRoute = useRouteState((s) => s.deleteRoute);
   const { width, height, offsetX, offsetY, cellOffsetX, cellOffsetY } =
     useGridLayout();
+  const ctrlDown = useKeyState((state) => state.ctrl);
   const routeLines: JSX.Element[] = [];
+
+  const handleMouseUp = () => {
+    if (!isDrawingRoute && ctrlDown && hoveredRoute !== null) {
+      deleteRoute(hoveredRoute);
+    }
+  };
 
   //Converts routes into line segments, create a map of segments
   class LineSegment {
@@ -187,6 +196,7 @@ function RouteOverlaySVG() {
           strokeWidth={hoveredRoute === id && !isDrawingRoute ? 4 : 3}
           onMouseOver={() => setHoveredRoute(id)}
           onMouseLeave={() => setHoveredRoute(null)}
+          onMouseUp={handleMouseUp}
           pointerEvents="auto"
         />
       );
