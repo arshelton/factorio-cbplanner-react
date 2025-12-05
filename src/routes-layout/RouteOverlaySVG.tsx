@@ -11,14 +11,24 @@ function RouteOverlaySVG() {
   const setHoveredRoute = useRouteState((s) => s.setHoveredRoute);
   const isDrawingRoute = useRouteState((s) => s.isDrawingRoute);
   const deleteRoute = useRouteState((s) => s.deleteRoute);
+  const changeRouteIcon = useRouteState((s) => s.changeRouteIcon);
+  const setSelectedRoute = useRouteState((s) => s.setSelectedRoute);
   const { width, height, offsetX, offsetY, cellOffsetX, cellOffsetY } =
     useGridLayout();
   const ctrlDown = useKeyState((state) => state.ctrl);
+  const shiftDown = useKeyState((state) => state.shift);
   const routeLines: JSX.Element[] = [];
 
   const handleMouseUp = () => {
-    if (!isDrawingRoute && ctrlDown && hoveredRoute !== null) {
-      deleteRoute(hoveredRoute);
+    if (!isDrawingRoute && hoveredRoute !== null) {
+      if (ctrlDown) deleteRoute(hoveredRoute);
+      else if (shiftDown) changeRouteIcon(hoveredRoute, null);
+      else {
+        setSelectedRoute(hoveredRoute);
+        (
+          document.getElementById("menu-modal") as HTMLDialogElement
+        )?.showModal();
+      }
     }
   };
 

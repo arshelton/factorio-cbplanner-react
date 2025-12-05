@@ -33,7 +33,6 @@ function RegularCellBlock({ data, cellKey }: Props) {
     }
   };
   const handleMouseUp = () => {
-    setSelectedKey(cellKey);
     if (
       hoveredPosition !== null &&
       mouseDownOnCenter.current == true &&
@@ -51,6 +50,7 @@ function RegularCellBlock({ data, cellKey }: Props) {
           if (data.icons.length >= 9) {
             toast.error("Maximum Icons Reached");
           } else {
+            setSelectedKey(cellKey);
             (
               document.getElementById("menu-modal") as HTMLDialogElement
             )?.showModal();

@@ -123,6 +123,7 @@ interface RouteState {
   pruneRoute: (id: number, prunePoint: RoutePoint) => void;
   deleteRoute: (id: number) => void;
   branchRoute: (id: number, branchPoint: RoutePoint) => void;
+  changeRouteIcon: (id: number, newIcon: string | null) => void;
 
   areThereRoutesInCell: (key: string) => boolean;
 
@@ -133,6 +134,9 @@ interface RouteState {
 
   hoveredRoute: number | null;
   setHoveredRoute: (hoveredRoute: number | null) => void;
+
+  selectedRoute: number | null;
+  setSelectedRoute: (selectedRoute: number | null) => void;
 
   isDrawingRoute: boolean;
   setIsDrawingRoute: (isDrawingRoute: boolean) => void;
@@ -247,6 +251,20 @@ export const useRouteState = create<RouteState>()((set, get) => ({
 
   branchRoute: (route, branchPoint) => {},
 
+  changeRouteIcon: (id, newIcon) => {
+    const newRouteMap = new Map(get().routeMap);
+
+    const currentRoute = newRouteMap.get(id);
+    if (!currentRoute) return;
+
+    newRouteMap.set(id, {
+      ...currentRoute,
+      icon: newIcon,
+    });
+
+    get().setRouteMap(newRouteMap);
+  },
+
   areThereRoutesInCell: (key) => {
     return Array.from(get().routeMap.values()).some((route) =>
       route.path.some((routePoint) => routePoint.key == key)
@@ -261,6 +279,8 @@ export const useRouteState = create<RouteState>()((set, get) => ({
   hoveredRoute: null,
   setHoveredRoute: (hoveredRoute) => set({ hoveredRoute }),
 
+  selectedRoute: null,
+  setSelectedRoute: (selectedRoute) => set({ selectedRoute }),
   isDrawingRoute: false,
   setIsDrawingRoute: (isDrawingRoute) => set({ isDrawingRoute }),
 }));

@@ -3,14 +3,22 @@ import TabSelector from "./TabSelector";
 import IconGrid from "./IconGrid";
 import layoutConfig from "./layout-config.json";
 import { TabKey } from "./menuTypes";
+import { useGridState, useRouteState } from "../data-store/dataStore";
 
 const categories = Object.keys(layoutConfig) as TabKey[];
 
 function IconMenu() {
   const [activeTab, setActiveTab] = useState<TabKey>(categories[0]);
+  const setSelectedKey = useGridState((s) => s.setSelectedKey);
+  const setSelectedRoute = useRouteState((s) => s.setSelectedRoute);
+
+  const handleClose = () => {
+    setSelectedKey(null);
+    setSelectedRoute(null);
+  };
 
   return (
-    <dialog id="menu-modal" className="modal">
+    <dialog id="menu-modal" className="modal" onClose={handleClose}>
       <div className="modal-box w-11/12 max-w-5xl mt-10 h-[80vh] overflow-y-auto">
         <h3 className="font-bold text-lg">Select Icon</h3>
         <TabSelector

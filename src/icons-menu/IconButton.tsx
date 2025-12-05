@@ -1,4 +1,4 @@
-import { useGridState } from "../data-store/dataStore";
+import { useGridState, useRouteState } from "../data-store/dataStore";
 import Icon from "./Icon";
 
 type Props = {
@@ -8,15 +8,14 @@ type Props = {
 const SIZE = 60;
 
 function IconButton({ name }: Props) {
-  const { selectedKey, selectedSide, addIcon } = useGridState();
+  const { selectedKey, addIcon } = useGridState();
+  const { selectedRoute, changeRouteIcon } = useRouteState();
 
   const handleClick = () => {
     if (selectedKey) {
-      if (selectedSide !== null) {
-        addIcon(selectedKey, name, selectedSide);
-      } else {
-        addIcon(selectedKey, name);
-      }
+      addIcon(selectedKey, name);
+    } else if (selectedRoute !== null) {
+      changeRouteIcon(selectedRoute, name);
     }
     (document.getElementById("menu-modal") as HTMLDialogElement)?.close();
   };
