@@ -39,11 +39,10 @@ function RegularCellBlock({ data, cellKey }: Props) {
       mouseDownOnCenter.current == true &&
       !isDrawingRoute
     ) {
+      setHoveredPosition(null);
       if (ctrlDown && !areThereRoutesInCell(cellKey)) {
-        setHoveredPosition(null);
         removeCell(cellKey);
       } else if (altDown && !areThereRoutesInCell(cellKey)) {
-        setHoveredPosition(null);
         convertToBus(cellKey);
       } else {
         if (shiftDown) {
