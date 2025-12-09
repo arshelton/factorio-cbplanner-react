@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useRouteState, useGridState } from "../data-store/dataStore";
 import { RoutePoint, RoutePosition } from "../types/mainTypes";
+import { areRoutePointsAdjacent } from "./utils/routeUtils";
 
 export default function useRouteController() {
   const { hoveredPosition, addRoute, extendRoute, pruneRoute } =
@@ -66,6 +67,15 @@ export default function useRouteController() {
         currentRoute.current = [originPoint, hoveredPosition];
       } else if (activeId.current !== null) {
         if (!currentRoute.current || currentRoute.current.length === 0) return;
+
+        if (
+          currentRoute.current.slice(-1)[0] !== hoveredPosition &&
+          !areRoutePointsAdjacent(
+            currentRoute.current.slice(-1)[0],
+            hoveredPosition
+          )
+        )
+          return;
 
         const existingIndex = currentRoute.current.findIndex(
           (p) =>
