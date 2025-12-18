@@ -5,8 +5,9 @@ function HelpModal() {
         <h3 className="font-bold text-lg pb-4">How to Use</h3>
         <p className="">
           The purpose of this app is to provide an easy UI to plan out a
-          grid/cityblock based factory in Factorio, replacing map tacks in the
-          base game. Basic controls are as follows:
+          grid/cityblock based factory in Factorio. I wanted something a little
+          more structured than just placing map tacks in the base game, so I
+          built this. Basic controls are as follows:
         </p>
         <ul className="list-disc ml-5">
           <li>Click the + buttons to add more cells.</li>
@@ -14,16 +15,11 @@ function HelpModal() {
             Click in the center of a cell to designate production in that cell.
           </li>
           <li>
-            Click on the sides of a cell to designate side routes running
-            through a cell.
+            Click and drag from the center of a cell to draw routes for items.
           </li>
-          <li>
-            Hover over a side route to see icons running through that route.
-          </li>
+          <li>Hover over a route to see its item.</li>
           <li>See keybinds window (to the right) for deleting icons/cells.</li>
-          <li>
-            Grid state is stored in the URL, so bookmark URL to save or share.
-          </li>
+          <li>State is stored in the URL, so bookmark URL to save or share.</li>
         </ul>
       </div>
 

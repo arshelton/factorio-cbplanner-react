@@ -6,14 +6,19 @@ function HotkeysModal() {
         <p>
           <kbd className="kbd">shift</kbd>
           <span className="text-md font-bold">+ Left Mouse:</span>
-          <span className="pl-2">
-            Removes icons from a given cell or side route
-          </span>
+          <span className="pl-2">Removes icons from a given cell or route</span>
         </p>
         <p>
           <kbd className="kbd">ctrl</kbd>
           <span className="text-md font-bold">+ Left Mouse:</span>
-          <span className="pl-2">Deletes a cell</span>
+          <span className="pl-2">Deletes a cell or route</span>
+        </p>
+        <p>
+          <kbd className="kbd">alt</kbd>
+          <span className="text-md font-bold">+ Left Mouse:</span>
+          <span className="pl-2">
+            Converts a cell to a bus cell (must not contain routes)
+          </span>
         </p>
       </div>
 
