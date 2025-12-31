@@ -1,6 +1,6 @@
-import { useRouteState } from "../data-store/dataStore";
-import Icon from "../icons-menu/Icon";
-import { RegularCell, RoutePosition } from "../types/mainTypes";
+import { useRouteState } from "../../data-store/dataStore";
+import Icon from "../../icons-menu/Icon";
+import { RegularCell, RoutePosition } from "../../types/mainTypes";
 
 type Props = {
   cellData: RegularCell;

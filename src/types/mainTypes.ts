@@ -1,7 +1,7 @@
 export type Icons = string[];
 
 export type BusCell = {
-  isHorizontal: boolean;
+  routes: Icons;
 };
 export type RegularCell = {
   icons: Icons;

@@ -34,7 +34,7 @@ export const routePositionOffset = (pos: RoutePosition): [number, number] => {
       return [f - hhh - 1, f - hhh];
     case RoutePosition.Bus:
       console.warn("RoutePosition.Bus not implemented");
-      return [h, h]; //TODO: DYNAMIC BUS ROUTING
+      return [h, h];
   }
 };
 
@@ -66,23 +66,34 @@ export const areRoutePointsAdjacent = (
     const rowDiff = Math.abs(row1 - row2);
     const colDiff = Math.abs(col1 - col2);
 
-    const subrow1 = Math.floor(pos1 / 3);
-    const subrow2 = Math.floor(pos2 / 3);
-    const subcol1 = pos1 % 3;
-    const subcol2 = pos2 % 3;
-
-    if (colDiff === 1 && rowDiff === 0) {
-      //Horizontally-adjacent-key case
-      if (subrow1 !== subrow2) return false;
-      if (col1 < col2) return subcol1 === 2 && subcol2 === 0;
-      else return subcol1 === 0 && subcol2 === 2;
-    } else if (rowDiff === 1 && colDiff === 0) {
-      //Vertically-adjacent-key case
-      if (subcol1 !== subcol2) return false;
-      if (row1 < row2) return subrow1 === 2 && subrow2 === 0;
-      else return subrow1 === 0 && subrow2 === 2;
+    if (pos1 == RoutePosition.Bus && pos2 == RoutePosition.Bus) {
+      //Both bus case
+      return false; //Bus-bus routes are handled by grid
+    } else if (pos1 == RoutePosition.Bus || pos2 == RoutePosition.Bus) {
+      //One bus case
+      return (
+        (colDiff === 1 && rowDiff === 0) || (colDiff === 0 && rowDiff === 1)
+      );
     } else {
-      return false;
+      //Neither bus case
+      const subrow1 = Math.floor(pos1 / 3);
+      const subrow2 = Math.floor(pos2 / 3);
+      const subcol1 = pos1 % 3;
+      const subcol2 = pos2 % 3;
+
+      if (colDiff === 1 && rowDiff === 0) {
+        //Horizontally-adjacent-key case
+        if (subrow1 !== subrow2) return false;
+        if (col1 < col2) return subcol1 === 2 && subcol2 === 0;
+        else return subcol1 === 0 && subcol2 === 2;
+      } else if (rowDiff === 1 && colDiff === 0) {
+        //Vertically-adjacent-key case
+        if (subcol1 !== subcol2) return false;
+        if (row1 < row2) return subrow1 === 2 && subrow2 === 0;
+        else return subrow1 === 0 && subrow2 === 2;
+      } else {
+        return false;
+      }
     }
   }
 };

@@ -1,16 +1,18 @@
 import { useEffect, useRef } from "react";
 import { useRouteState, useGridState } from "../data-store/dataStore";
-import { RoutePoint, RoutePosition } from "../types/mainTypes";
+import { BusCell, Route, RoutePoint, RoutePosition } from "../types/mainTypes";
 import { areRoutePointsAdjacent } from "./utils/routeUtils";
+import { keyToCoord } from "../main-layout/utils/gridUtils";
+import { correspondingBusPosition } from "../main-layout/utils/busUtils";
 
 export default function useRouteController() {
   const { hoveredPosition, addRoute, extendRoute, pruneRoute } =
     useRouteState();
-  const grid = useGridState((s) => s.grid);
+  const addRouteToBus = useGridState((s) => s.addRouteToBus);
 
   const mouseDownOnCenter = useRef(false);
-  const activeId = useRef<number | null>(null);
-  const currentRoute = useRef<RoutePoint[]>([]); //Track route locally - zustand too slow for mouse drag
+  const drawingRouteId = useRef<number | null>(null);
+  const currentRoute = useRef<Route>({ path: [], icon: null }); //Track route locally - zustand too slow for mouse drag
 
   //Handle window mouse down and up events
   useEffect(() => {
@@ -24,9 +26,12 @@ export default function useRouteController() {
     };
 
     const handleMouseUp = () => {
-      activeId.current = null;
+      drawingRouteId.current = null;
       mouseDownOnCenter.current = false;
-      currentRoute.current = [];
+      currentRoute.current = {
+        path: [],
+        icon: null,
+      };
       useRouteState.getState().setIsDrawingRoute(false);
     };
 
@@ -41,7 +46,7 @@ export default function useRouteController() {
   //Handle route drawing when mouse was pressed on center
   useEffect(() => {
     const getOriginIcon = (originPosition: RoutePoint): string | null => {
-      const cell = grid.get(originPosition.key);
+      const cell = useGridState.getState().grid.get(originPosition.key);
 
       if (!cell) return null;
       if ("icons" in cell && cell.icons.length > 0) {
@@ -58,45 +63,72 @@ export default function useRouteController() {
           ...hoveredPosition,
           position: RoutePosition.Center,
         };
-        activeId.current = addRoute(
+        drawingRouteId.current = addRoute(
           getOriginIcon(hoveredPosition),
           originPoint
         );
-        extendRoute(activeId.current, hoveredPosition);
+        extendRoute(drawingRouteId.current, hoveredPosition);
 
-        currentRoute.current = [originPoint, hoveredPosition];
-      } else if (activeId.current !== null) {
-        if (!currentRoute.current || currentRoute.current.length === 0) return;
+        currentRoute.current = {
+          path: [originPoint, hoveredPosition],
+          icon: getOriginIcon(hoveredPosition),
+        };
+      } else if (drawingRouteId.current !== null) {
+        if (!currentRoute.current || currentRoute.current.path.length === 0)
+          throw new Error("currentRoute missing despite drawingRoute not null");
 
+        //Abort if last and current point are not adjacent
+        const lastPosition = currentRoute.current.path.slice(-1)[0];
         if (
-          currentRoute.current.slice(-1)[0] !== hoveredPosition &&
-          !areRoutePointsAdjacent(
-            currentRoute.current.slice(-1)[0],
-            hoveredPosition
-          )
+          lastPosition !== hoveredPosition &&
+          !areRoutePointsAdjacent(lastPosition, hoveredPosition)
         )
           return;
 
-        const existingIndex = currentRoute.current.findIndex(
+        //Prune route if looping back on itself
+        const existingIndex = currentRoute.current.path.findIndex(
           (p) =>
             p.key === hoveredPosition.key &&
             p.position === hoveredPosition.position
         );
-
-        if (existingIndex >= 0) {
-          currentRoute.current = currentRoute.current.slice(
+        if (existingIndex !== -1) {
+          currentRoute.current.path = currentRoute.current.path.slice(
             0,
             existingIndex + 1
           );
-          pruneRoute(activeId.current, hoveredPosition);
+          pruneRoute(drawingRouteId.current, hoveredPosition);
         } else {
-          currentRoute.current.push(hoveredPosition);
-          extendRoute(activeId.current, hoveredPosition);
+          //Correct and terminate route if bus
+          if (hoveredPosition.position === RoutePosition.Bus) {
+            //Correct route position to align with bus properly
+            const correctedPosition = hoveredPosition;
+            correctedPosition.position = correspondingBusPosition(
+              lastPosition,
+              hoveredPosition
+            );
+
+            currentRoute.current.path.push(hoveredPosition);
+            extendRoute(drawingRouteId.current, correctedPosition);
+            if (
+              currentRoute.current.icon &&
+              !(
+                useGridState.getState().grid.get(hoveredPosition.key) as BusCell
+              ).routes.includes(currentRoute.current.icon)
+            )
+              addRouteToBus(hoveredPosition.key, currentRoute.current.icon);
+
+            drawingRouteId.current = null;
+          } else {
+            //Otherwise, extend as normal
+            currentRoute.current.path.push(hoveredPosition);
+            extendRoute(drawingRouteId.current, hoveredPosition);
+          }
         }
       }
     }
+
     mouseDownOnCenter.current = false;
-  }, [hoveredPosition, addRoute, extendRoute, pruneRoute, grid]);
+  }, [hoveredPosition, addRoute, extendRoute, pruneRoute, addRouteToBus]);
 
   //Prevent annoying default dnd behavior
   useEffect(() => {

@@ -1,9 +1,9 @@
 import toast from "react-hot-toast";
-import { useGridState, useRouteState } from "../data-store/dataStore";
-import { useKeyState } from "../key-state/keyState";
-import { RegularCell, RoutePosition } from "../types/mainTypes";
+import { useGridState, useRouteState } from "../../data-store/dataStore";
+import { useKeyState } from "../../key-state/keyState";
+import { RegularCell, RoutePosition } from "../../types/mainTypes";
 import { useRef } from "react";
-import { CELL_SIZE } from "../config/config";
+import { CELL_SIZE } from "../../config/config";
 import RegularCellBlockOuterSection from "./RegularCellBlockOuterSection";
 import RegularCellBlockCenter from "./RegularCellBlockCenter";
 

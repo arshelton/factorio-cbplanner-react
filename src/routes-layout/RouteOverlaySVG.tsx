@@ -2,7 +2,11 @@ import { JSX } from "react";
 import { useRouteState } from "../data-store/dataStore";
 import { getIconColor, routePointToPixel } from "./utils/routeUtils";
 import { useGridLayout } from "../hooks/useGridLayout";
-import { ROUTE_SPACING } from "../config/config";
+import {
+  ROUTE_SPACING,
+  ROUTE_WIDTH_HIGHLIGHTED,
+  ROUTE_WIDTH_NORMAL,
+} from "../config/config";
 import { useKeyState } from "../key-state/keyState";
 
 function RouteOverlaySVG() {
@@ -203,7 +207,11 @@ function RouteOverlaySVG() {
               ? getIconColor(routeMap.get(id)!.icon!)
               : "white"
           }
-          strokeWidth={hoveredRoute === id && !isDrawingRoute ? 4 : 3}
+          strokeWidth={
+            hoveredRoute === id && !isDrawingRoute
+              ? ROUTE_WIDTH_HIGHLIGHTED
+              : ROUTE_WIDTH_NORMAL
+          }
           onMouseOver={() => setHoveredRoute(id)}
           onMouseLeave={() => setHoveredRoute(null)}
           onMouseUp={handleMouseUp}

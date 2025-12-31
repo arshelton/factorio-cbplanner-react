@@ -1,5 +1,5 @@
-import { useRouteState } from "../data-store/dataStore";
-import { RoutePosition } from "../types/mainTypes";
+import { useRouteState } from "../../data-store/dataStore";
+import { RoutePosition } from "../../types/mainTypes";
 
 type Props = {
   position: RoutePosition;

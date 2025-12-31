@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { deflateRaw, inflateRaw } from "pako";
 import { Cell, Grid, Route, RouteMap, RoutePoint } from "../types/mainTypes";
+import { coordToKey, keyToCoord } from "../main-layout/utils/gridUtils";
 
 //#region Grid State
 interface GridState {
@@ -11,6 +12,7 @@ interface GridState {
   convertToBus: (key: string) => void;
   convertToRegular: (key: string) => void;
   addIcon: (key: string, icon: string) => void;
+  addRouteToBus: (key: string, icon: string) => void;
   clearIcons: (key: string) => void;
 
   selectedKey: string | null;
@@ -65,7 +67,7 @@ export const useGridState = create<GridState>()((set, get) => ({
   convertToBus: (key) => {
     const newGrid = new Map(get().grid);
     newGrid.set(key, {
-      isHorizontal: false,
+      routes: [],
     });
 
     get().setGrid(newGrid);
@@ -84,21 +86,67 @@ export const useGridState = create<GridState>()((set, get) => ({
     const newGrid = new Map(get().grid);
 
     const currentCell = newGrid.get(key);
-    if (!currentCell || "isHorizontal" in currentCell) return;
-
-    newGrid.set(key, {
-      ...currentCell,
-      icons: [...currentCell.icons, icon],
-    });
+    if (!currentCell) return;
+    if ("routes" in currentCell) {
+      newGrid.set(key, {
+        ...currentCell,
+        routes: [...currentCell.routes, icon],
+      });
+    } else {
+      newGrid.set(key, {
+        ...currentCell,
+        icons: [...currentCell.icons, icon],
+      });
+    }
 
     get().setGrid(newGrid);
+  },
+
+  addRouteToBus: (key, icon) => {
+    const grid = get().grid;
+
+    const currentCell = grid.get(key);
+    if (!currentCell || "icons" in currentCell) return;
+
+    const visited = new Set<string>();
+    const queue: string[] = [key];
+    const connectedBuses: string[] = [];
+
+    while (queue.length > 0) {
+      const key = queue.shift()!;
+
+      if (visited.has(key)) continue;
+      visited.add(key);
+
+      const cell = grid.get(key);
+      if (!cell || "icons" in cell) continue;
+
+      connectedBuses.push(key);
+
+      const [x, y] = keyToCoord(key);
+      const adjacentCoords: [number, number][] = [
+        [x + 1, y],
+        [x - 1, y],
+        [x, y + 1],
+        [x, y - 1],
+      ];
+
+      for (const adjCoord of adjacentCoords) {
+        const adjKey = coordToKey(adjCoord);
+        if (!visited.has(adjKey)) queue.push(adjKey);
+      }
+    }
+
+    for (const busKey of connectedBuses) {
+      get().addIcon(busKey, icon);
+    }
   },
 
   clearIcons: (key) => {
     const newGrid = new Map(get().grid);
 
     const currentCell = newGrid.get(key);
-    if (!currentCell || "isHorizontal" in currentCell) return;
+    if (!currentCell || "routes" in currentCell) return;
 
     const updatedCell = {
       ...currentCell,

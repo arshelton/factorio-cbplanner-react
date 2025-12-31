@@ -1,7 +1,7 @@
 import { useGridState } from "../data-store/dataStore";
 import AddButton from "./AddButton";
-import BusCellBlock from "./BusCellBlock";
-import RegularCellBlock from "./RegularCellBlock";
+import BusCellBlock from "./bus-cell-block/BusCellBlock";
+import RegularCellBlock from "./regular-cell-block/RegularCellBlock";
 import { getAddablePositions } from "./utils/gridUtils";
 
 import { CELL_SIZE } from "../config/config";
@@ -23,8 +23,8 @@ function Grid() {
 
     if (cell == null) return;
 
-    if ("isHorizontal" in cell) {
-      content = <BusCellBlock cellKey={key} />;
+    if ("routes" in cell) {
+      content = <BusCellBlock data={cell} cellKey={key} />;
     } else if ("icons" in cell) {
       content = <RegularCellBlock data={cell} cellKey={key} />;
     }
