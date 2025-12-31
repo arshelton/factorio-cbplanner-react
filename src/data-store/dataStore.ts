@@ -1,6 +1,13 @@
 import { create } from "zustand";
 import { deflateRaw, inflateRaw } from "pako";
-import { Cell, Grid, Route, RouteMap, RoutePoint } from "../types/mainTypes";
+import {
+  BusCell,
+  Cell,
+  Grid,
+  Route,
+  RouteMap,
+  RoutePoint,
+} from "../types/mainTypes";
 import { coordToKey, keyToCoord } from "../main-layout/utils/gridUtils";
 
 //#region Grid State
@@ -66,10 +73,28 @@ export const useGridState = create<GridState>()((set, get) => ({
 
   convertToBus: (key) => {
     const newGrid = new Map(get().grid);
-    newGrid.set(key, {
-      routes: [],
-    });
 
+    const [x, y] = keyToCoord(key);
+    const adjacentCoords: [number, number][] = [
+      [x + 1, y],
+      [x - 1, y],
+      [x, y + 1],
+      [x, y - 1],
+    ];
+
+    const newCell: BusCell = {
+      routes: [],
+    };
+
+    for (const coord of adjacentCoords) {
+      const cell = newGrid.get(coordToKey(coord));
+      if (cell && "routes" in cell) {
+        newCell.routes = cell.routes;
+        break;
+      }
+    }
+
+    newGrid.set(key, newCell);
     get().setGrid(newGrid);
   },
 
