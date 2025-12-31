@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import { useRouteState, useGridState } from "../data-store/dataStore";
 import { BusCell, Route, RoutePoint, RoutePosition } from "../types/mainTypes";
 import { areRoutePointsAdjacent } from "./utils/routeUtils";
-import { keyToCoord } from "../main-layout/utils/gridUtils";
 import { correspondingBusPosition } from "../main-layout/utils/busUtils";
 
 export default function useRouteController() {

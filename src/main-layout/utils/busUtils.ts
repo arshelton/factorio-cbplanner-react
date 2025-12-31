@@ -1,10 +1,4 @@
-import {
-  BusCell,
-  Coord,
-  Grid,
-  RoutePoint,
-  RoutePosition,
-} from "../../types/mainTypes";
+import { Grid, RoutePoint, RoutePosition } from "../../types/mainTypes";
 import { coordToKey, keyToCoord } from "./gridUtils";
 
 export const correspondingBusPosition = (
